@@ -43,7 +43,7 @@ function Post({ signedInUser, postId, username, caption, img_url }) {
                 <Avatar
                     className="post_avatar"
                     alt="Shivam"
-                    src="wwwww.jpg"
+                    src=""
                 />
                 <h3>{username}</h3>
             </div>

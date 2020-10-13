@@ -36,3 +36,10 @@
   display:flex;
   flex-direction: column;
 }
+
+@media screen and (max-width: 600px) {
+  .app_hideEmbedMobile {
+    display:block;
+    display:none
+  }
+}

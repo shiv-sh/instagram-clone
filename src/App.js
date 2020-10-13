@@ -190,7 +190,7 @@ function App() {
               <Post key={id} signedInUser={user} postId={id} username={post.username} caption={post.caption} img_url={post.img_url} />
             ))}
         </div>
-        <div className="app_postsRight">
+        <div className="app_postsRight app_hideEmbedMobile">
           <InstagramEmbed
             url='https://instagr.am/p/Zw9o4/'
             maxWidth={320}

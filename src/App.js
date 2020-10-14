@@ -91,7 +91,7 @@ function App() {
   const fetchPosts = async () =>
       await axios.get('/sync').then(response => {
         console.log(response);
-        setPosts(response.data.orderBy('timestamp', 'desc'))
+        setPosts(response.data)
       });
 
   useEffect(() => {

@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import { Button } from '@material-ui/core';
+import { Input,Button } from '@material-ui/core';
 import { storage, db } from './firebase';
 import firebase from "firebase";
-import './ImageUpload.css';
+import './ImageUpload.css'; 
+import axios from './axios';
 
 function ImageUpload({userName}) {
     const [image,setImage] = useState(null);
@@ -39,12 +40,21 @@ function ImageUpload({userName}) {
                 .child(image.name)
                 .getDownloadURL()
                 .then(url => {
-                    // post image insde db
+                    
+                    
+                    axios.post('/upload', {
+                        caption: caption,
+                        username:userName,
+                        image: url
+                    });
+                    // post image inside db
                     db.collection("posts").add({
                         timestamp:firebase.firestore.FieldValue.serverTimestamp(),
                         caption:caption,
                         img_url:url,
-                        username:userName
+                        username:userName,
+                        timestamp:firebase.firestore.FieldValue.
+                        serverTimestamp()
                     });
 
                     setProgress(0);

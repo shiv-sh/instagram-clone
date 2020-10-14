@@ -7,6 +7,8 @@ import Modal from '@material-ui/core/Modal';
 import { Button, Input } from '@material-ui/core';
 import ImageUpload from './ImageUpload';
 import InstagramEmbed from 'react-instagram-embed';
+import axios from './axios';
+import Pusher from 'pusher-js';
 
 
 function getModalStyle() {
@@ -70,16 +72,47 @@ function App() {
     }
   }, [user, userName]);
 
+  // useEffect(() => {
+  //   //this is where the code runs
+  //   db.collection('posts').orderBy('timestamp', 'desc')
+  //   .onSnapshot(snapshot => {
+  //     setPosts(snapshot.docs.map(doc => ({
+  //       id: doc.id,
+  //       post: doc.data()
+  //     })
+  //     ));
+  //   })
+  // }, []);
+
+
+  // *********FOR MERN*******  
+  // uncomment above code for firebase..
+
+  const fetchPosts = async () =>
+      await axios.get('/sync').then(response => {
+        console.log(response);
+        setPosts(response.data)
+      });
+
   useEffect(() => {
-    //this is where the code runs
-    db.collection('posts').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-      setPosts(snapshot.docs.map(doc => ({
-        id: doc.id,
-        post: doc.data()
-      })
-      ));
-    })
+    var pusher = new Pusher('2ea464c1eacc38ac161a', {
+      cluster: 'ap2'
+    });
+
+    var channel = pusher.subscribe('posts');
+    channel.bind('inserted', function(data) {
+      console.log("data received", data);
+      fetchPosts();
+    });
+  },[])
+
+
+  useEffect(() => {
+    
+    fetchPosts();
   }, []);
+
+  console.log('Posts are >>>', posts);
 
   // if we leave empty array in useEffect it means it runs
   // when app component loads, and in this case it will run
@@ -185,10 +218,29 @@ function App() {
 
       <div className="app_posts">
         <div className="app_postsLeft">
-          {
+          {/* {
             posts.map(({ post, id }) => (
-              <Post key={id} signedInUser={user} postId={id} username={post.username} caption={post.caption} img_url={post.img_url} />
+              <Post
+                key={id}
+                signedInUser={user}
+                postId={id}
+                username={post.username}
+                caption={post.caption}
+                img_url={post.img_url} />
+            ))} */}
+
+            {/* for Mern stack start->*/}
+            {
+            posts.map(( post ) => (
+              <Post
+                key={post._id}
+                signedInUser={post.username}
+                postId={post._id}
+                username={post.username}
+                caption={post.caption}
+                img_url={post.image} />
             ))}
+            {/* for mern stack end <- */}
         </div>
         <div className="app_postsRight app_hideEmbedMobile">
           <InstagramEmbed
@@ -206,7 +258,7 @@ function App() {
         </div>
       </div>
 
-      {user?.displayName ? (
+      {user ?.displayName ? (
         <ImageUpload userName={user.displayName} />
       ) : <h3>Sorry you need to login to upload</h3>}
     </div>
